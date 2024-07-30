@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
+</head>
+<body>
+    <div style="width: 500px" id="reader"></div>
+</body>
+<script>
+    function onScanSuccess(decodedText, decodedResult) {
+        console.log(`Scan result: ${decodedText}`, decodedResult);
+        window.alert(`Scan result: ${decodedText}`);
+        envio_codigo_barra(decodedText);
+    }
+
+    function onScanError(errorMessage) {
+        console.error(`Scan error: ${errorMessage}`);
+    }
+
+    var html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: 250 }
+    );
+
+    html5QrcodeScanner.render(onScanSuccess, onScanError);
+
+    function envio_codigo_barra(codigo_barra){
+        fetch('/api/busqueda_producto_codigo_barra', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({codigo_barra: codigo_barra}),
+        })
+    }
+</script>
+</html>
