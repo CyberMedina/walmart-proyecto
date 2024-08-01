@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import time
 from flask import Flask, render_template
 from dotenv import load_dotenv
-from flask import request
+from flask import request, jsonify
 app = Flask(__name__)
 
 # Cargar las variables de entorno desde el archivo .env
@@ -36,9 +36,11 @@ def api_busqueda_producto_codigo_barra():
     product = extract_product_info_by_id(search_url)
     if product:
         print(product)
-        return product
+        return jsonify(product)
     else:
+        print("No se pudo recuperar la información del producto.")
         return 'No se pudo recuperar la información del producto.'
+    
 
     return 'Hello, World!'
 
