@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Scanner</title>
-    <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
+    <script src="{{ url_for('static', filename= 'js/html5-qrcode.min.js') }}"></script>
 </head>
 <body>
     <div style="width: 500px" id="reader"></div>
@@ -21,7 +21,10 @@
     }
 
     var html5QrcodeScanner = new Html5QrcodeScanner(
-        "reader", { fps: 10, qrbox: 250 }
+        "reader", { fps: 10,
+             qrbox: 250,
+                aspectRatio: 1.0,
+             }
     );
 
     html5QrcodeScanner.render(onScanSuccess, onScanError);
