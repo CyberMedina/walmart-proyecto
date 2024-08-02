@@ -15,9 +15,7 @@ load_dotenv()
 def index():
     return render_template('/index.html')
 
-if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8000, debug=True)
- 
+
 
 
 @app.route('/api/busqueda_producto_codigo_barra', methods=['POST'])
@@ -33,7 +31,8 @@ def api_busqueda_producto_codigo_barra():
     
     base_url = "https://www.walmart.com.ni/"
     search_url = f"{base_url}{product_id}"
-    product = extract_product_info_by_id(search_url)
+    # product = extract_product_info_by_id(search_url)
+    product = 0
     if product:
         print(product)
         return jsonify(product)
@@ -95,6 +94,10 @@ def extract_product_info_by_id(search_url):
         
         return product_info
 
+
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=8000, debug=True)
+ 
 # Ejemplo de uso
 # product_id = "7501032907495"  # ID del producto específico
 # base_url = "https://www.walmart.com.ni/"

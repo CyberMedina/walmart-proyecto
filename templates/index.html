@@ -3,19 +3,23 @@
 {% block title %}Sumador de compras{% endblock %}
 
 {% block body %}
-<script src="{{ url_for('static', filename ='/js/color-modes.js') }}"></script>
+<script src="{{ url_for('static', filename ='js/color-modes.js') }}"></script>
 <link rel="stylesheet" href="{{ url_for('static', filename ='/css/cdn/datatable.css') }}">
-<script src="{{ url_for('static', filename ='/js/cdn/jquery.js') }}"></script>
-<script src="{{ url_for('static', filename ='/js/cdn/datatable.js') }}"></script>
-<script src="{{ url_for('static', filename ='/js/cdn/datatable_boostrap5.js') }}"></script>
+<script src="{{ url_for('static', filename ='js/cdn/jquery.js') }}"></script>
+<script src="{{ url_for('static', filename ='js/cdn/datatable.js') }}"></script>
+<script src="{{ url_for('static', filename ='js/cdn/datatable_boostrap5.js') }}"></script>
 <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
 
-<div class="container">
+
+
+
+
+<div class="container mt-5 mb-3">
     <div class="row justify-content-center">
         <div class="col-auto">
             <h1 class="text-center">Sumador de compras</h1>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalScannerProducto"
-                style="display: block; margin: 0 auto;">Añadir producto</button>
+            <button type="button" class="btn btn-primary mt-3" id="startScan" data-bs-toggle="modal"
+                data-bs-target="#modalScannerProducto" style="display: block; margin: 0 auto;">Añadir producto</button>
         </div>
     </div>
 </div>
@@ -23,28 +27,54 @@
 
 
 
-<div style="width: 500px" id="reader"></div>
-<button id="startScan">Iniciar Escaneo</button>
-
-<table id="myTable" class="display">
-    <thead>
-        <tr>
-            <th>Column 1</th>
-            <th>Column 2</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Row 1 Data 1</td>
-            <td>Row 1 Data 2</td>
-        </tr>
-        <tr>
-            <td>Row 2 Data 1</td>
-            <td>Row 2 Data 2</td>
-        </tr>
-    </tbody>
-</table>
-
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Lista de productos</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="myTable" class="table table-striped table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Código de barra</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Precio</th>
+                                    <th scope="col">Cantidad</th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>123456789</td>
+                                    <td>Producto 1</td>
+                                    <td>1000</td>
+                                    <td>1</td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary btn-sm">Editar</button>
+                                        <button type="button" class="btn btn-danger btn-sm">Eliminar</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>987654321</td>
+                                    <td>Producto 2</td>
+                                    <td>2000</td>
+                                    <td>2</td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary btn-sm">Editar</button>
+                                        <button type="button" class="btn btn-danger btn-sm">Eliminar</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
@@ -99,22 +129,160 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Modal title</h5>
+                <h5 class="modal-title">Escanea el producto</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Modal body text goes here.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <div id="reader" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
 
-{% endblock %}
+                <div class="row">
+                    <div class="col">
+                        <form id="formProducto">
+                            <div class="mb-3 col-4">
+                                <label for="codigo_barra" class="form-label">Código de barra</label>
+                                <input type="text" class="form-control" id="codigo_barra" name="codigo_barra"
+                                    placeholder="Código de barra" readonly required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="codigo_barra" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombreProducto" name="nombreProducto"
+                                    placeholder="Nombre del producto" readonly required>
+                            </div>
+                            <div class="form-floating">
+                                <label for="codigo_barra" class="form-label">Descripcion</label>
+                                <textarea class="form-control" placeholder="Descripción del producto"
+                                    id="floatingTextarea"></textarea>
+                                <label for="floatingTextarea">Descripción</label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="codigo_barra" class="form-label">Precio</label>
+                                <input type="text" class="form-control" id="nombreProducto" name="nombreProducto"
+                                    placeholder="Precio" readonly required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="codigo_barra" class="form-label">Cantidad</label>
+                                <input type="number" class="form-control" id="nombreProducto" name="nombreProducto"
+                                    placeholder="Cantidad" readonly required>
+                            </div>
 
-{% block customJS %}
-<script src="{{ url_for('static', filename ='/js/añadir_producto.js') }}"></script>
-{% endblock %}
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                <button type="button" class="btn btn-primary">Guardar producto</button>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+
+                document.addEventListener('DOMContentLoaded', function () {
+                    const loaderWrapper = document.querySelector('.loader-wrapper');
+
+                    // Mostrar loader al cargar la página
+                    loaderWrapper.style.display = 'flex';
+
+                    // Ocultar loader cuando la página haya cargado completamente
+                    window.addEventListener('load', function () {
+                        loaderWrapper.style.display = 'none';
+                    });
+
+                    function onScanSuccess(decodedText, decodedResult) {
+                        console.log(`Scan result: ${decodedText}`, decodedResult);
+                        window.alert(`Scan result: ${decodedText}`);
+                        showLoader();
+                        envio_codigo_barra(decodedText).then(producto => {
+                            window.alert(`Producto: ${producto.Nombre}\nDescripción: ${producto.Descripción}\nPrecio: ${producto.Precio}`);
+                        }).catch(error => {
+                            console.error('Error al enviar el código de barra:', error);
+                        }).finally(() => {
+                            hideLoader();
+                        });
+                    }
+
+                    function onScanError(errorMessage) {
+                        console.error(`Scan error: ${errorMessage}`);
+                    }
+
+                    function startScanning() {
+                        Html5Qrcode.getCameras().then(devices => {
+                            if (devices && devices.length) {
+                                var camera = devices.find(device => device.label === "camera2 0, facing back");
+                                var cameraId = camera ? camera.id : devices[0].id;
+
+                                const html5QrCode = new Html5Qrcode("reader");
+
+                                html5QrCode.start(
+                                    cameraId,
+                                    {
+                                        fps: 10,    // Incrementar FPS para mejor rendimiento
+                                        qrbox : { width: 150, height: 400 }, // Ajustar el tamaño del cuadro QR
+                                        disableFlip: false, // Deshabilitar la inversión de la cámara
+                                        aspectRatio: 1.5,  // Ajustar la relación de aspecto
+                                        experimentalFeatures: {
+                                            useBarCodeDetectorIfSupported: true
+                                        },
+
+                                    },
+                                    onScanSuccess,
+                                    onScanError
+                                );
+                            }
+                            hideLoader();
+                        }).catch(err => {
+                            console.error(err);
+                        });
+                    }
+
+                    function showLoader() {
+                        loaderWrapper.style.display = 'flex';
+                    }
+
+                    function hideLoader() {
+                        loaderWrapper.style.display = 'none';
+                    }
+
+                    document.getElementById('startScan').addEventListener('click', () => {
+                        showLoader();
+                        startScanning();
+                        const modalScannerProducto = new bootstrap.Modal(document.getElementById('modalScannerProducto'));
+                        modalScannerProducto.show();
+                    });
+
+                    function envio_codigo_barra(codigo_barra) {
+                        return fetch('/api/busqueda_producto_codigo_barra', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ codigo_barra: codigo_barra }),
+                        })
+                            .then(response => response.json())
+                            .then(data => data)
+                            .catch(error => {
+                                console.error('Error en la solicitud:', error);
+                                throw error;
+                            });
+                    }
+                });
+
+
+
+
+
+
+
+
+                // Acá se inicializa el datatable
+
+                let table = new DataTable('#myTable');</script>
+            {% endblock %}
+
+            {% block customJS %}
+            <script src="{{ url_for('static', filename ='/js/añadir_producto.js') }}"></script>
+            {% endblock %}
