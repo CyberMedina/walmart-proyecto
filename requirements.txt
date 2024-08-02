@@ -1,0 +1,16 @@
+beautifulsoup4
+blinker
+certifi
+charset-normalizer
+click
+colorama
+Flask
+idna
+itsdangerous
+Jinja2
+MarkupSafe
+python-dotenv
+requests
+soupsieve
+urllib3
+Werkzeug
