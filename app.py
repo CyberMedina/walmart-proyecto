@@ -31,8 +31,8 @@ def api_busqueda_producto_codigo_barra():
     
     base_url = "https://www.walmart.com.ni/"
     search_url = f"{base_url}{product_id}"
-    # product = extract_product_info_by_id(search_url)
-    product = 0
+    product = extract_product_info_by_id(search_url)
+    # product = 0
     if product:
         print(product)
         return jsonify(product)
