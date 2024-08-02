@@ -144,30 +144,34 @@
                 <div class="row">
                     <div class="col">
                         <form id="formProducto">
-                            <div class="mb-3 col-4">
+                            <div class="mb-3 col-6">
+                                <label for="img_producto" class="form-label">Producto</label>
+                                <img class="img-fluid" src="" id="img_producto" alt="">
+                            </div>
+
+                            <div class="mb-3 col-6">
                                 <label for="codigo_barra" class="form-label">Código de barra</label>
                                 <input type="text" class="form-control" id="codigo_barra" name="codigo_barra"
-                                    placeholder="Código de barra" readonly required>
+                                    placeholder="Código de barra" readonly>
                             </div>
                             <div class="mb-3">
                                 <label for="codigo_barra" class="form-label">Nombre</label>
                                 <input type="text" class="form-control" id="nombreProducto" name="nombreProducto"
-                                    placeholder="Nombre del producto" readonly required>
+                                    placeholder="Nombre del producto" readonly>
                             </div>
-                            <div class="form-floating">
-                                <label for="codigo_barra" class="form-label">Descripcion</label>
-                                <textarea class="form-control" placeholder="Descripción del producto"
-                                    id="floatingTextarea"></textarea>
-                                <label for="floatingTextarea">Descripción</label>
+                            <div class="mb-3">
+                                <label for="exampleTextarea" class="form-label">Descripción</label>
+                                <textarea class="form-control" id="producto_descripcion" rows="4"
+                                    placeholder="Descripción del producto" readonly></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="codigo_barra" class="form-label">Precio</label>
-                                <input type="text" class="form-control" id="nombreProducto" name="nombreProducto"
-                                    placeholder="Precio" readonly required>
+                                <input type="text" class="form-control" id="producto_precio" name="nombreProducto"
+                                    placeholder="Precio" readonly>
                             </div>
                             <div class="mb-3">
                                 <label for="codigo_barra" class="form-label">Cantidad</label>
-                                <input type="number" class="form-control" id="nombreProducto" name="nombreProducto"
+                                <input type="number" class="form-control" id="producto_cantidad" name="nombreProducto"
                                     placeholder="Cantidad" readonly required>
                             </div>
 
@@ -197,7 +201,13 @@
                         window.alert(`Scan result: ${decodedText}`);
                         showLoader();
                         envio_codigo_barra(decodedText).then(producto => {
-                            window.alert(`Producto: ${producto.Nombre}\nDescripción: ${producto.Descripción}\nPrecio: ${producto.Precio}`);
+                            document.getElementById('img_producto').src = producto.Imagen;
+                            document.getElementById('codigo_barra').value = producto.Codigo_barra;
+                            document.getElementById('nombreProducto').value = producto.Nombre;
+                            document.getElementById('producto_descripcion').value = producto.Descripción;
+                            document.getElementById('producto_precio').value = producto.Precio;
+                            document.getElementById('producto_cantidad').value = 1;
+                            window.alert(`Código de barra: ${producto.Codigo_barra}Producto: ${producto.Nombre}\nDescripción: ${producto.Descripción}\nPrecio: ${producto.Precio}`);
                         }).catch(error => {
                             console.error('Error al enviar el código de barra:', error);
                         }).finally(() => {
@@ -221,7 +231,7 @@
                                     cameraId,
                                     {
                                         fps: 10,    // Incrementar FPS para mejor rendimiento
-                                        qrbox : 180, // Ajustar el tamaño del cuadro QR
+                                        qrbox: 180, // Ajustar el tamaño del cuadro QR
                                         disableFlip: false, // Deshabilitar la inversión de la cámara
                                         aspectRatio: 1.5,  // Ajustar la relación de aspecto
                                         experimentalFeatures: {
