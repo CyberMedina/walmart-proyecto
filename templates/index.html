@@ -11,7 +11,50 @@
 <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
 
 
+<style>
+    .custom-container {
+        max-width: 250px;
+        display: flex;
+        background-color: #ffffff;
+        border-radius: 45px;
+        box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
+    }
 
+    #my-input {
+        -moz-appearance: textfield;
+        text-align: center;
+        font-size: 40px;
+        border: none;
+        background-color: #ffffff;
+        color: #202030;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+
+    .custom-container button {
+        background-color: transparent;
+        border: none;
+        font-size: 40px;
+        cursor: pointer;
+
+    }
+
+
+    #decrement {
+        padding: 15px 5px 15px 25px;
+        border-radius: 45px 0 0 45px;
+    }
+
+    #increment {
+        padding: 15px 25px 15px 5px;
+        border-radius: 0 45px 45px 0;
+    }
+</style>
 
 
 <div class="container mt-5 mb-3">
@@ -48,27 +91,25 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>123456789</td>
-                                    <td>Producto 1</td>
-                                    <td>1000</td>
-                                    <td>1</td>
                                     <td>
-                                        <button type="button" class="btn btn-primary btn-sm">Editar</button>
-                                        <button type="button" class="btn btn-danger btn-sm">Eliminar</button>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>987654321</td>
-                                    <td>Producto 2</td>
-                                    <td>2000</td>
-                                    <td>2</td>
+
                                     <td>
-                                        <button type="button" class="btn btn-primary btn-sm">Editar</button>
-                                        <button type="button" class="btn btn-danger btn-sm">Eliminar</button>
+
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div class="mb-3">
+                        <button type="button" id="clear-all-products" class="btn btn-danger">Eliminar todos los
+                            productos</button>
+                    </div>
+                    <div class="mb-3">
+                        <h5>Total</h5>
+                        <p>C$<span id="total-productos">0.00</span></p>
                     </div>
                 </div>
             </div>
@@ -125,6 +166,9 @@
     </ul>
 </div>
 
+
+
+
 <div class="modal fade" id="modalScannerProducto" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -141,146 +185,230 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col">
-                        <form id="formProducto">
-                            <div class="mb-3 col-6">
-                                <label for="img_producto" class="form-label">Producto</label>
-                                <img class="img-fluid" src="" id="img_producto" alt="">
-                            </div>
-
-                            <div class="mb-3 col-6">
-                                <label for="codigo_barra" class="form-label">Código de barra</label>
-                                <input type="text" class="form-control" id="codigo_barra" name="codigo_barra"
-                                    placeholder="Código de barra" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="codigo_barra" class="form-label">Nombre</label>
-                                <input type="text" class="form-control" id="nombreProducto" name="nombreProducto"
-                                    placeholder="Nombre del producto" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="exampleTextarea" class="form-label">Descripción</label>
-                                <textarea class="form-control" id="producto_descripcion" rows="4"
-                                    placeholder="Descripción del producto" readonly></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="codigo_barra" class="form-label">Precio</label>
-                                <input type="text" class="form-control" id="producto_precio" name="nombreProducto"
-                                    placeholder="Precio" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="codigo_barra" class="form-label">Cantidad</label>
-                                <input type="number" class="form-control" id="producto_cantidad" name="nombreProducto"
-                                    placeholder="Cantidad" readonly required>
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                <button type="button" class="btn btn-primary">Guardar producto</button>
-                            </div>
-                    </div>
-                </div>
             </div>
 
-            <script>
+        </div>
+    </div>
+</div>
 
-                document.addEventListener('DOMContentLoaded', function () {
-                    const loaderWrapper = document.querySelector('.loader-wrapper');
+<!-- Modal trigger button -->
+<button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalDatosProducto">
+    Launch
+</button>
 
-                    // Mostrar loader al cargar la página
-                    loaderWrapper.style.display = 'flex';
+<div class="modal fade" id="modalDatosProducto" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Datos del producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
 
-                    // Ocultar loader cuando la página haya cargado completamente
-                    window.addEventListener('load', function () {
-                        loaderWrapper.style.display = 'none';
-                    });
+                    <div class="row">
+                        <div class="col">
+                            <form id="formProducto">
+                                <div class="mb-3 col-6">
+                                    <label for="nombreProducto" id="nombreProducto" class="form-label"></label>
+                                    <img class="img-fluid" src="" id="img_producto" alt="">
+                                </div>
 
-                    function onScanSuccess(decodedText, decodedResult) {
-                        console.log(`Scan result: ${decodedText}`, decodedResult);
-                        window.alert(`Scan result: ${decodedText}`);
-                        showLoader();
-                        envio_codigo_barra(decodedText).then(producto => {
-                            document.getElementById('img_producto').src = producto.Imagen;
-                            document.getElementById('codigo_barra').value = producto.Codigo_barra;
-                            document.getElementById('nombreProducto').value = producto.Nombre;
-                            document.getElementById('producto_descripcion').value = producto.Descripción;
-                            document.getElementById('producto_precio').value = producto.Precio;
-                            document.getElementById('producto_cantidad').value = 1;
-                            window.alert(`Código de barra: ${producto.Codigo_barra}Producto: ${producto.Nombre}\nDescripción: ${producto.Descripción}\nPrecio: ${producto.Precio}`);
-                        }).catch(error => {
-                            console.error('Error al enviar el código de barra:', error);
-                        }).finally(() => {
-                            hideLoader();
-                        });
-                    }
+                                <div class="mb-3 col-6" hidden>
+                                    <label for="codigo_barra" class="form-label">Código de barra</label>
+                                    <input type="text" class="form-control" id="codigo_barra" name="codigo_barra"
+                                        placeholder="Código de barra" readonly>
+                                </div>
 
-                    function onScanError(errorMessage) {
-                        console.error(`Scan error: ${errorMessage}`);
-                    }
+                                <div class="mb-3" hidden>
+                                    <label for="exampleTextarea" class="form-label">Descripción</label>
+                                    <textarea class="form-control" id="producto_descripcion" rows="4"
+                                        placeholder="Descripción del producto" readonly></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="producto_precio" class="form-label">Precio</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="basic-addon1">C$</span>
+                                        <input type="number" class="form-control" id="producto_precio"
+                                            name="producto_precio" aria-label="Username"
+                                            aria-describedby="basic-addon1">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="codigo_barra" class="form-label">Cantidad</label>
+                                    <div class="container d-flex justify-content-center">
+                                        <div class="custom-container">
+                                            <button id="decrement" onclick="stepper(event, this)"> - </button>
+                                            <input type="number" min="1" max="100" step="1" value="1" id="my-input">
+                                            <button id="increment" onclick="stepper(event, this)"> + </button>
+                                        </div>
+                                    </div>
 
-                    function startScanning() {
-                        Html5Qrcode.getCameras().then(devices => {
-                            if (devices && devices.length) {
-                                var camera = devices.find(device => device.label === "camera2 0, facing back");
-                                var cameraId = camera ? camera.id : devices[0].id;
+                                </div>
 
-                                const html5QrCode = new Html5Qrcode("reader");
+                                <div class="mb-3">
+                                    <h5>Total</h5>
+                                    <p>C$<span id="total-producto"></span></p>
 
-                                html5QrCode.start(
-                                    cameraId,
-                                    {
-                                        fps: 10,    // Incrementar FPS para mejor rendimiento
-                                        qrbox: 180, // Ajustar el tamaño del cuadro QR
-                                        disableFlip: false, // Deshabilitar la inversión de la cámara
-                                        aspectRatio: 1.5,  // Ajustar la relación de aspecto
-                                        experimentalFeatures: {
-                                            useBarCodeDetectorIfSupported: true
-                                        },
+                                </div>
 
-                                    },
-                                    onScanSuccess,
-                                    onScanError
-                                );
-                            }
-                            hideLoader();
-                        }).catch(err => {
-                            console.error(err);
-                        });
-                    }
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cerrar</button>
+                                    <button type="button" id="guardar-producto" class="btn btn-primary">Guardar
+                                        producto</button>
+                                </div>
+                        </div>
+                    </div>
+                </div>
 
-                    function showLoader() {
-                        loaderWrapper.style.display = 'flex';
-                    }
+            </div>
 
-                    function hideLoader() {
-                        loaderWrapper.style.display = 'none';
-                    }
+        </div>
+    </div>
+</div>
 
-                    document.getElementById('startScan').addEventListener('click', () => {
-                        showLoader();
-                        startScanning();
-                        const modalScannerProducto = new bootstrap.Modal(document.getElementById('modalScannerProducto'));
-                        modalScannerProducto.show();
-                    });
+<script>
 
-                    function envio_codigo_barra(codigo_barra) {
-                        return fetch('/api/busqueda_producto_codigo_barra', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ codigo_barra: codigo_barra }),
-                        })
-                            .then(response => response.json())
-                            .then(data => data)
-                            .catch(error => {
-                                console.error('Error en la solicitud:', error);
-                                throw error;
-                            });
-                    }
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const modalScannerProducto = new bootstrap.Modal(document.getElementById('modalScannerProducto'));
+        const modalDatosProducto = new bootstrap.Modal(document.getElementById('modalDatosProducto'));
+        const loaderWrapper = document.querySelector('.loader-wrapper');
+        let html5QrCode; // Definimos html5QrCode a nivel global
+        let scanTimeout; // Variable para el debounce
+
+
+
+        // Función para detener el escáner y habilitar el botón
+        function stopScannerAndEnableButton() {
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    console.log("Escáner detenido");
+                    document.getElementById('startScan').disabled = false; // Habilita el botón
+                }).catch(err => {
+                    console.error("Error al detener el escáner:", err);
+                });
+            } else {
+                document.getElementById('startScan').disabled = false; // Habilita el botón si no hay escáner
+            }
+        }
+
+        // Agregar eventos para detener el escáner cuando los modales se cierren
+        document.getElementById('modalScannerProducto').addEventListener('hidden.bs.modal', stopScannerAndEnableButton);
+        document.getElementById('modalDatosProducto').addEventListener('hidden.bs.modal', stopScannerAndEnableButton);
+
+        // Mostrar loader al cargar la página
+        loaderWrapper.style.display = 'flex';
+
+        // Ocultar loader cuando la página haya cargado completamente
+        window.addEventListener('load', function () {
+            loaderWrapper.style.display = 'none';
+        });
+
+        function onScanSuccess(decodedText, decodedResult) {
+            clearTimeout(scanTimeout);
+            scanTimeout = setTimeout(() => {
+                // Cerramos el escáner para evitar múltiples lecturas
+                html5QrCode.stop().then(() => {
+                    console.log("Escáner detenido");
+                }).catch(err => {
+                    console.error("Error al detener el escáner:", err);
                 });
 
+                modalScannerProducto.hide();
+                modalDatosProducto.show();
+                document.getElementById('startScan').disabled = false; // Habilita el botón
+
+                showLoader();
+                envio_codigo_barra(decodedText).then(producto => {
+
+
+                    document.getElementById('img_producto').src = producto.Imagen;
+                    document.getElementById('codigo_barra').value = producto.Codigo_barra;
+                    document.getElementById('nombreProducto').textContent = producto.Nombre;
+                    document.getElementById('producto_descripcion').value = producto.Descripción;
+                    document.getElementById('producto_precio').value = producto.Precio;
+                    calcularTotal();
+                    document.getElementById('producto_cantidad').value = 1;
+                    window.alert(`Código de barra: ${producto.Codigo_barra}\nProducto: ${producto.Nombre}\nDescripción: ${producto.Descripción}\nPrecio: ${producto.Precio}`);
+
+                }).catch(error => {
+                    console.error('Error al enviar el código de barra:', error);
+                }).finally(() => {
+                    hideLoader();
+                });
+            }, 500); // Ajusta el tiempo de debounce según sea necesario
+        }
+
+        function onScanError(errorMessage) {
+            console.error(`Scan error: ${errorMessage}`);
+        }
+
+        function startScanning() {
+            Html5Qrcode.getCameras().then(devices => {
+                if (devices && devices.length) {
+                    var camera = devices.find(device => device.label === "camera2 0, facing back");
+                    var cameraId = camera ? camera.id : devices[0].id;
+
+                    html5QrCode = new Html5Qrcode("reader");
+
+                    html5QrCode.start(
+                        cameraId,
+                        {
+                            fps: 10,    // Incrementar FPS para mejor rendimiento
+                            qrbox: 180, // Ajustar el tamaño del cuadro QR
+                            disableFlip: false, // Deshabilitar la inversión de la cámara
+                            aspectRatio: 1.5,  // Ajustar la relación de aspecto
+                            experimentalFeatures: {
+                                useBarCodeDetectorIfSupported: true
+                            },
+                        },
+                        onScanSuccess,
+                        onScanError
+                    ).then(() => {
+                        console.log("Escáner iniciado");
+                    }).catch(err => {
+                        console.error("Error al iniciar el escáner:", err);
+                    });
+                }
+                hideLoader();
+            }).catch(err => {
+                console.error("Error al obtener cámaras:", err);
+            });
+        }
+
+        function showLoader() {
+            loaderWrapper.style.display = 'flex';
+        }
+
+        function hideLoader() {
+            loaderWrapper.style.display = 'none';
+        }
+
+        document.getElementById('startScan').addEventListener('click', () => {
+            document.getElementById('startScan').disabled = true; // Deshabilita el botón
+            showLoader();
+            startScanning();
+            modalScannerProducto.show();
+        });
+
+        function envio_codigo_barra(codigo_barra) {
+            return fetch('/api/busqueda_producto_codigo_barra', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ codigo_barra: codigo_barra }),
+            })
+                .then(response => response.json())
+                .then(data => data)
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    throw error;
+                });
+        }
+    });
 
 
 
@@ -288,11 +416,197 @@
 
 
 
-                // Acá se inicializa el datatable
 
-                let table = new DataTable('#myTable');</script>
-            {% endblock %}
 
-            {% block customJS %}
-            <script src="{{ url_for('static', filename ='/js/añadir_producto.js') }}"></script>
-            {% endblock %}
+
+
+    const myInput = document.getElementById("my-input");
+    function stepper(event, btn) {
+        event.preventDefault();
+
+        let id = btn.getAttribute("id");
+        let min = parseInt(myInput.getAttribute("min"));
+        let max = parseInt(myInput.getAttribute("max"));
+        let step = parseInt(myInput.getAttribute("step"));
+        let value = parseInt(myInput.value);
+
+
+
+        if (id === "increment" && value < max) {
+            myInput.value = value + step;
+        } else if (id === "decrement" && value > min) {
+            myInput.value = value - step;
+        }
+
+        calcularTotal();
+
+
+
+
+
+    }
+
+    function calcularTotal() {
+        let precio = parseFloat(document.getElementById("producto_precio").value) || 0;
+        let cantidad = parseFloat(document.getElementById("my-input").value) || 0;
+        let total = precio * cantidad;
+
+        // Formatear el total con comas para miles
+        let totalFormatted = total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        document.getElementById("total-producto").textContent = totalFormatted;
+    }
+
+    // Añadir el evento de input a ambos elementos
+    document.getElementById("producto_precio").addEventListener("input", calcularTotal);
+    document.getElementById("my-input").addEventListener("input", calcularTotal);
+
+    // Ejecutar la función cuando se cargue el DOM
+    document.addEventListener("DOMContentLoaded", calcularTotal);
+
+
+    // Acá se inicializa el datatable
+
+    let table = new DataTable('#myTable');
+
+    // Función para guardar un producto en localStorage
+    function saveProduct() {
+        // Obtener los valores de los campos del formulario
+        let codigoBarra = document.getElementById('codigo_barra').value;
+        let nombre = document.getElementById('nombreProducto').textContent;
+        let precio = document.getElementById('producto_precio').value;
+        let cantidad = document.getElementById('my-input').value;
+
+        // Crear un objeto con los datos del producto
+        let producto = {
+            codigoBarra: codigoBarra,
+            nombre: nombre,
+            precio: precio,
+            cantidad: cantidad
+        };
+
+        // Obtener la lista actual de productos desde localStorage
+        let productos = JSON.parse(localStorage.getItem('productos')) || [];
+
+        // Actualizar o añadir el producto a la lista
+        let index = productos.findIndex(p => p.codigoBarra === codigoBarra);
+        if (index !== -1) {
+            productos[index] = producto; // Actualizar producto existente
+        } else {
+            productos.push(producto); // Añadir nuevo producto
+        }
+
+        // Guardar la lista actualizada en localStorage
+        localStorage.setItem('productos', JSON.stringify(productos));
+
+        // Limpiar la tabla y volver a cargar productos
+        loadProducts();
+        calculateTotal(); // Calcular el total después de guardar
+    }
+
+    // Función para agregar un producto a la tabla
+    function addProductToTable(producto) {
+        let tableBody = document.querySelector('#myTable tbody');
+        let row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${producto.codigoBarra}</td>
+            <td>${producto.nombre}</td>
+            <td>${producto.precio}</td>
+            <td>${producto.cantidad}</td>
+            <td>
+                <button type="button" class="btn btn-primary btn-sm edit-btn">Editar</button>
+                <button type="button" class="btn btn-danger btn-sm delete-btn">Eliminar</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    }
+
+    // Función para cargar productos desde localStorage en la tabla
+    function loadProducts() {
+        let productos = JSON.parse(localStorage.getItem('productos')) || [];
+        let tableBody = document.querySelector('#myTable tbody');
+        tableBody.innerHTML = ''; // Limpiar la tabla antes de recargar
+
+        productos.forEach(producto => addProductToTable(producto));
+
+        // Agregar eventos para botones de editar y eliminar
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', editProduct);
+        });
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', deleteProduct);
+        });
+
+        // Calcular el total de los productos
+        calculateTotal();
+    }
+
+    // Función para calcular el total de todos los productos
+    function calculateTotal() {
+        let productos = JSON.parse(localStorage.getItem('productos')) || [];
+        let total = productos.reduce((sum, producto) => sum + (parseFloat(producto.precio) * parseInt(producto.cantidad)), 0);
+        document.getElementById('total-productos').textContent = total.toFixed(2);
+    }
+
+    // Función para editar un producto
+    function editProduct(event) {
+        let row = event.target.closest('tr');
+        let cells = row.querySelectorAll('td');
+
+        // Rellenar el modal con los datos del producto
+        document.getElementById('codigo_barra').value = cells[0].textContent;
+        document.getElementById('nombreProducto').textContent = cells[1].textContent;
+        document.getElementById('producto_precio').value = cells[2].textContent;
+        document.getElementById('my-input').value = cells[3].textContent;
+
+        // Mostrar el modal
+        let modal = new bootstrap.Modal(document.getElementById('modalDatosProducto'));
+        modal.show();
+    }
+
+    // Función para eliminar un producto
+    function deleteProduct(event) {
+        let row = event.target.closest('tr');
+        let codigoBarra = row.querySelector('td').textContent;
+
+        // Obtener la lista actual de productos desde localStorage
+        let productos = JSON.parse(localStorage.getItem('productos')) || [];
+
+        // Filtrar el producto que se eliminará
+        productos = productos.filter(p => p.codigoBarra !== codigoBarra);
+
+        // Guardar la lista actualizada en localStorage
+        localStorage.setItem('productos', JSON.stringify(productos));
+
+        // Limpiar la tabla y volver a cargar productos
+        loadProducts();
+    }
+
+    // Función para eliminar todos los productos
+    function clearAllProducts() {
+        localStorage.removeItem('productos'); // Eliminar todos los productos de localStorage
+        loadProducts(); // Limpiar la tabla
+    }
+
+    // Cargar productos cuando la página se recargue
+    loadProducts();
+
+    // Evento para guardar el producto cuando se presiona el botón
+    document.getElementById('guardar-producto').addEventListener('click', function () {
+        saveProduct();
+    });
+
+    // Evento para eliminar todos los productos cuando se presiona el botón
+    document.getElementById('clear-all-products').addEventListener('click', function () {
+        clearAllProducts();
+    });
+
+
+
+</script>
+{% endblock %}
+
+{% block customJS %}
+<script src="{{ url_for('static', filename ='/js/añadir_producto.js') }}"></script>
+{% endblock %}

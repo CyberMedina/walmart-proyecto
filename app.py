@@ -29,6 +29,8 @@ def api_busqueda_producto_codigo_barra():
 
     product_id = data['codigo_barra']
 
+    # return jsonify({'Codigo_barra': '1', 'Nombre': 'Protec Nivea Sun Sensac Ligera F50 - 200ml', 'Descripción': 'Protec Nivea Sun Sensac Ligera F50 - 200ml', 'Imagen': 'https://walmartni.vtexassets.com/arquivos/ids/371972/Protec-Nivea-Sun-Sensac-Ligera-F50-200ml-2-4784.jpg?v=638454009729930000', 'Precio': 505})
+
     
     base_url = "https://www.walmart.com.ni/"
     search_url = f"{base_url}{product_id}"
@@ -111,7 +113,7 @@ def extract_product_info_by_id(search_url, product_id):
             
             # Extrae la información del producto
             product_info = {
-                'Codigo_barra': '1',
+                'Codigo_barra': product_id,
                 'Nombre': product.get('productName', 'N/A'),
                 'Descripción': product.get('description', 'N/A'),
                 'Imagen': image_url
