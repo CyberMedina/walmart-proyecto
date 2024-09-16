@@ -28,6 +28,7 @@ def api_busqueda_producto_codigo_barra():
     data = request.get_json()
 
     product_id = data['codigo_barra']
+    print(product_id)
 
     # return jsonify({'Codigo_barra': '1', 'Nombre': 'Protec Nivea Sun Sensac Ligera F50 - 200ml', 'Descripción': 'Protec Nivea Sun Sensac Ligera F50 - 200ml', 'Imagen': 'https://walmartni.vtexassets.com/arquivos/ids/371972/Protec-Nivea-Sun-Sensac-Ligera-F50-200ml-2-4784.jpg?v=638454009729930000', 'Precio': 505})
 
@@ -41,7 +42,7 @@ def api_busqueda_producto_codigo_barra():
         return jsonify(product)
     else:
         print("No se pudo recuperar la información del producto.")
-        return 'No se pudo recuperar la información del producto.'
+        return jsonify({'error': 'No se pudo recuperar la información del producto.' })
     
 
     return 'Hello, World!'

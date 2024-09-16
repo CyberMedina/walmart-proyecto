@@ -8,7 +8,8 @@
 <script src="{{ url_for('static', filename ='js/cdn/jquery.js') }}"></script>
 <script src="{{ url_for('static', filename ='js/cdn/datatable.js') }}"></script>
 <script src="{{ url_for('static', filename ='js/cdn/datatable_boostrap5.js') }}"></script>
-<script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
+<script src="{{ url_for('static', filename ='js/cdn/html5-qrcode.js') }}"></script>
+
 
 
 <style>
@@ -90,16 +91,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>
-                                    </td>
-                                </tr>
-                                <tr>
 
-                                    <td>
-
-                                    </td>
-                                </tr>
+                                
                             </tbody>
                         </table>
                     </div>
@@ -191,10 +184,7 @@
     </div>
 </div>
 
-<!-- Modal trigger button -->
-<button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalDatosProducto">
-    Launch
-</button>
+
 
 <div class="modal fade" id="modalDatosProducto" tabindex="-1">
     <div class="modal-dialog">
@@ -298,6 +288,7 @@
         document.getElementById('modalScannerProducto').addEventListener('hidden.bs.modal', stopScannerAndEnableButton);
         document.getElementById('modalDatosProducto').addEventListener('hidden.bs.modal', stopScannerAndEnableButton);
 
+
         // Mostrar loader al cargar la página
         loaderWrapper.style.display = 'flex';
 
@@ -323,8 +314,21 @@
                 showLoader();
                 envio_codigo_barra(decodedText).then(producto => {
 
+                    if (producto.error) {
+                        window.alert(producto.error);
+                        hideLoader();
+                        return;
+                    }
 
-                    document.getElementById('img_producto').src = producto.Imagen;
+                    else if (producto.length === 0) {
+                        window.alert('Producto no encontrado');
+                        hideLoader();
+                        return;
+                    }
+
+                    else{
+
+                        document.getElementById('img_producto').src = producto.Imagen;
                     document.getElementById('codigo_barra').value = producto.Codigo_barra;
                     document.getElementById('nombreProducto').textContent = producto.Nombre;
                     document.getElementById('producto_descripcion').value = producto.Descripción;
@@ -332,6 +336,11 @@
                     calcularTotal();
                     document.getElementById('producto_cantidad').value = 1;
                     window.alert(`Código de barra: ${producto.Codigo_barra}\nProducto: ${producto.Nombre}\nDescripción: ${producto.Descripción}\nPrecio: ${producto.Precio}`);
+
+                    }
+
+
+                    
 
                 }).catch(error => {
                     console.error('Error al enviar el código de barra:', error);
@@ -356,7 +365,7 @@
                     html5QrCode.start(
                         cameraId,
                         {
-                            fps: 10,    // Incrementar FPS para mejor rendimiento
+                            fps: 30,    // Incrementar FPS para mejor rendimiento
                             qrbox: 180, // Ajustar el tamaño del cuadro QR
                             disableFlip: false, // Deshabilitar la inversión de la cámara
                             aspectRatio: 1.5,  // Ajustar la relación de aspecto
@@ -368,13 +377,20 @@
                         onScanError
                     ).then(() => {
                         console.log("Escáner iniciado");
+
+                        // Ocultar loader cuando la cámara esté lista
+                        hideLoader();
                     }).catch(err => {
                         console.error("Error al iniciar el escáner:", err);
+                        hideLoader(); // Asegurarte de ocultar el loader incluso si hay un error
                     });
+                } else {
+                    console.error("No se encontraron cámaras");
+                    hideLoader();
                 }
-                hideLoader();
             }).catch(err => {
                 console.error("Error al obtener cámaras:", err);
+                hideLoader();
             });
         }
 
@@ -502,6 +518,14 @@
         // Limpiar la tabla y volver a cargar productos
         loadProducts();
         calculateTotal(); // Calcular el total después de guardar
+        
+        // Cerrar el modal
+        let modal = bootstrap.Modal.getInstance(document.getElementById('modalDatosProducto'));
+        modal.hide(); // Oculta el modal
+
+
+
+
     }
 
     // Función para agregar un producto a la tabla
